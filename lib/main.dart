@@ -667,9 +667,15 @@ class ContactTab extends StatelessWidget {
   final Map<String, dynamic> data;
   const ContactTab(this.data, {super.key});
   @override
-  Widget build(BuildContext context) { /* same as you had */ 
+  Widget build(BuildContext context) {
+
     final email = (data['email'] ?? '').toString();
     final links = List<Map<String, dynamic>>.from(data['links'] ?? const []);
+    final pdf = (data['pdf'] as Map<String, dynamic>?) ?? const {};
+    final lang = Localizations.localeOf(context).languageCode.toLowerCase();
+    final fallback = lang == 'fr' ? (pdf['fr'] ?? pdf['en']) : (pdf['en'] ?? pdf['fr']);
+    final pdfUrl = (fallback ?? '').toString();
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -685,6 +691,15 @@ class ContactTab extends StatelessWidget {
           subtitle: Text(l['url']),
           onTap: () => launchUrl(Uri.parse(l['url'])),
         )),
+        if (pdfUrl.isNotEmpty)
+          OutlinedButton.icon(
+            onPressed: () => launchUrl(
+              Uri.parse(pdfUrl),
+              webOnlyWindowName: '_blank', // WEB: open in new tab
+            ),
+            icon: const Icon(Icons.picture_as_pdf),
+            label: Text(lang == 'fr' ? 'Voir le CV' : 'View Resume'),
+          ),
       ],
     );
   }

@@ -7,6 +7,8 @@ import 'package:resume_app/features/shared/editors/experiences_editor.dart';
 import 'package:resume_app/features/shared/editors/projects_editor.dart';
 import 'package:resume_app/features/shared/utils/icon_registry.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 // import 'dart:typed_data';
 // import 'package:file_picker/file_picker.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
@@ -197,6 +199,9 @@ class _ResumeEditorState extends State<_ResumeEditor> {
   final _summary = TextEditingController();
   final _email = TextEditingController();
 
+  final _pdfEn = TextEditingController();
+  final _pdfFr = TextEditingController();
+
   bool _openAbout = false;
   bool _openExp = false;
   bool _openProj = false;
@@ -237,6 +242,8 @@ class _ResumeEditorState extends State<_ResumeEditor> {
     _location.dispose();
     _summary.dispose();
     _email.dispose();
+    _pdfEn.dispose();
+    _pdfFr.dispose();
     super.dispose();
   }
 
@@ -289,6 +296,10 @@ class _ResumeEditorState extends State<_ResumeEditor> {
         notes:  (e['notes']  ?? '').toString(),
       )).toList();
 
+      final pdf = (data['pdf'] as Map<String, dynamic>?) ?? const {};
+      _pdfEn.text = (pdf['en'] ?? '').toString();
+      _pdfFr.text = (pdf['fr'] ?? '').toString();
+
       _dirty = false;
     } catch (e) {
       _error = e.toString();
@@ -334,7 +345,11 @@ class _ResumeEditorState extends State<_ResumeEditor> {
           .where((e) => e.school.trim().isNotEmpty || e.dates.trim().isNotEmpty || e.notes.trim().isNotEmpty)
           .map((e) => {'school': e.school.trim(), 'dates': e.dates.trim(), 'notes': e.notes.trim()})
           .toList(),
-      // keep existing experience/projects unless doing replace and fields omitted
+      
+      'pdf': {
+        'en': _pdfEn.text.trim(),
+        'fr': _pdfFr.text.trim(),
+      },
     };
 
     try {
@@ -349,6 +364,30 @@ class _ResumeEditorState extends State<_ResumeEditor> {
       if (!silent && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
       }
+    }
+  }
+
+  Future<void> _openPdf(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid PDF URL')),
+      );
+      return;
+    }
+
+    // Open in a new tab on web, external app elsewhere
+    final ok = await launchUrl(
+      uri,
+      mode: LaunchMode.platformDefault,
+      webOnlyWindowName: '_blank',
+    );
+
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not launch PDF')),
+      );
     }
   }
 
@@ -580,6 +619,11 @@ class _ResumeEditorState extends State<_ResumeEditor> {
                       _queueDebouncedSave();
                     }),
                     onEmailChanged: (_) => _queueDebouncedSave(),
+
+                    pdfEnController: _pdfEn,
+                    pdfFrController: _pdfFr,
+                    showPdfButtons: true,
+                    onOpenPdf: _openPdf,
                   ),
 
                   const SizedBox(height: 16),

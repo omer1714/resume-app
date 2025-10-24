@@ -1,1 +1,72 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"resume-app-omer","appId":"1:479518471903:android:8828367d725570e8559b6a","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"resume-app-omer","appId":"1:479518471903:ios:4d8779e977822510559b6a","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"resume-app-omer","appId":"1:479518471903:ios:4d8779e977822510559b6a","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"resume-app-omer","configurations":{"android":"1:479518471903:android:8828367d725570e8559b6a","ios":"1:479518471903:ios:4d8779e977822510559b6a","macos":"1:479518471903:ios:4d8779e977822510559b6a","web":"1:479518471903:web:b1479e7711e5440b559b6a","windows":"1:479518471903:web:7aaab98761b45153559b6a"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "resume-app-omer",
+          "appId": "1:479518471903:android:8828367d725570e8559b6a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "resume-app-omer",
+          "appId": "1:479518471903:ios:4d8779e977822510559b6a",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "resume-app-omer",
+          "appId": "1:479518471903:ios:4d8779e977822510559b6a",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "resume-app-omer",
+          "configurations": {
+            "android": "1:479518471903:android:8828367d725570e8559b6a",
+            "ios": "1:479518471903:ios:4d8779e977822510559b6a",
+            "macos": "1:479518471903:ios:4d8779e977822510559b6a",
+            "web": "1:479518471903:web:b1479e7711e5440b559b6a",
+            "windows": "1:479518471903:web:7aaab98761b45153559b6a"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "destination": "/index.html" }],
+    "headers": [
+      {
+        "source": "/index.html",
+        "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0" }]
+      },
+      {
+        "source": "/assets/**",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      },
+      {
+        "source": "**/*.js",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      },
+      {
+        "source": "**/*.css",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      },
+      {
+        "source": "**/*.wasm",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      },
+      {
+        "source": "**/*.{png,jpg,jpeg,gif,webp,svg,ico}",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      }
+    ]
+  }
+}
