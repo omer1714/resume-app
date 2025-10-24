@@ -14,6 +14,7 @@ class ContactEditor extends StatelessWidget {
   final TextEditingController? pdfFrController;
   final bool showPdfButtons;
   final void Function(String url)? onOpenPdf;
+  final VoidCallback? onPdfChanged; 
 
   const ContactEditor({
     super.key,
@@ -28,6 +29,7 @@ class ContactEditor extends StatelessWidget {
     this.pdfFrController,
     this.showPdfButtons = false,
     this.onOpenPdf,
+    this.onPdfChanged,
   });
 
   @override
@@ -47,46 +49,26 @@ class ContactEditor extends StatelessWidget {
         ),
         const SizedBox(height: 8),
 
-        // --- NEW: PDF URL editors (shown if controllers provided) ---
+        // NEW: PDF fields (optional, shown if controllers provided)
         if (pdfEnController != null || pdfFrController != null) ...[
-          if (pdfEnController != null) ...[
-            TextField(
-              controller: pdfEnController,
-              decoration: const InputDecoration(
-                labelText: 'Resume PDF (EN) URL',
-                hintText: 'https://…/omer_en.pdf',
-              ),
+          TextField(
+            controller: pdfEnController,
+            decoration: const InputDecoration(
+              labelText: 'PDF Resume URL (EN)',
+              hintText: 'https://.../resume_en.pdf',
             ),
-            const SizedBox(height: 8),
-          ],
-          if (pdfFrController != null) ...[
-            TextField(
-              controller: pdfFrController,
-              decoration: const InputDecoration(
-                labelText: 'Resume PDF (FR) URL',
-                hintText: 'https://…/omer_fr.pdf',
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-          if (showPdfButtons && onOpenPdf != null) Row(
-            children: [
-              if ((pdfEnController?.text ?? '').isNotEmpty)
-                OutlinedButton.icon(
-                  onPressed: () => onOpenPdf!(pdfEnController!.text),
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text('View Resume (EN)'),
-                ),
-              const SizedBox(width: 8),
-              if ((pdfFrController?.text ?? '').isNotEmpty)
-                OutlinedButton.icon(
-                  onPressed: () => onOpenPdf!(pdfFrController!.text),
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text('View Resume (FR)'),
-                ),
-            ],
+            onChanged: (_) => onPdfChanged?.call(),
           ),
           const SizedBox(height: 8),
+          TextField(
+            controller: pdfFrController,
+            decoration: const InputDecoration(
+              labelText: 'PDF Resume URL (FR)',
+              hintText: 'https://.../resume_fr.pdf',
+            ),
+            onChanged: (_) => onPdfChanged?.call(),
+          ),
+          const SizedBox(height: 12),
         ],
 
         LinksEditor(rows: links, onChanged: onLinksChanged),

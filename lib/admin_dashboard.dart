@@ -622,8 +622,9 @@ class _ResumeEditorState extends State<_ResumeEditor> {
 
                     pdfEnController: _pdfEn,
                     pdfFrController: _pdfFr,
-                    showPdfButtons: true,
-                    onOpenPdf: _openPdf,
+                    showPdfButtons: true, // optional
+                    onOpenPdf: (url) => launchUrl(Uri.parse(url), webOnlyWindowName: '_blank'),
+                    onPdfChanged: () => _queueDebouncedSave(),
                   ),
 
                   const SizedBox(height: 16),

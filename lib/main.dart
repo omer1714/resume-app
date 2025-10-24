@@ -666,13 +666,13 @@ class SkillsTab extends StatelessWidget {
 class ContactTab extends StatelessWidget {
   final Map<String, dynamic> data;
   const ContactTab(this.data, {super.key});
+
   @override
   Widget build(BuildContext context) {
-
     final email = (data['email'] ?? '').toString();
     final links = List<Map<String, dynamic>>.from(data['links'] ?? const []);
     final pdf = (data['pdf'] as Map<String, dynamic>?) ?? const {};
-    final lang = Localizations.localeOf(context).languageCode.toLowerCase();
+    final lang = Localizations.localeOf(context).languageCode.toLowerCase(); // 'en' | 'fr'
     final fallback = lang == 'fr' ? (pdf['fr'] ?? pdf['en']) : (pdf['en'] ?? pdf['fr']);
     final pdfUrl = (fallback ?? '').toString();
 
@@ -686,17 +686,15 @@ class ContactTab extends StatelessWidget {
             onTap: () => launchUrl(Uri.parse('mailto:$email')),
           ),
         ...links.map((l) => ListTile(
-          leading: Icon(_iconForName((l['icon'] ?? '').toString())),
-          title: Text(l['label']),
-          subtitle: Text(l['url']),
-          onTap: () => launchUrl(Uri.parse(l['url'])),
-        )),
+              leading: Icon(_iconForName((l['icon'] ?? '').toString())),
+              title: Text((l['label'] ?? '').toString()),
+              subtitle: Text((l['url'] ?? '').toString()),
+              onTap: () => launchUrl(Uri.parse((l['url'] ?? '').toString())),
+            )),
         if (pdfUrl.isNotEmpty)
+        const SizedBox(height: 16),
           OutlinedButton.icon(
-            onPressed: () => launchUrl(
-              Uri.parse(pdfUrl),
-              webOnlyWindowName: '_blank', // WEB: open in new tab
-            ),
+            onPressed: () => launchUrl(Uri.parse(pdfUrl), webOnlyWindowName: '_blank'),
             icon: const Icon(Icons.picture_as_pdf),
             label: Text(lang == 'fr' ? 'Voir le CV' : 'View Resume'),
           ),

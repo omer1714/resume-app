@@ -167,3 +167,6 @@ serviceAccountKey.json
 .env
 # private notes
 NOTES/
+
+# Firebase cache and config
+.firebase/
