@@ -1,0 +1,65 @@
+{
+  "name": "Omer Cheema",
+  "title": "Software Developer",
+  "location": "Montreal, QC",
+  "email": "OmerJavedCheema@gmail.com",
+  "links": [
+    {"label": "LinkedIn", "url": "https://linkedin.com/in/omer1714"},
+    {"label": "GitHub", "url": "https://github.com/omer1714"}
+  ],
+  "summary": "5+ years of experience in App and Web Development. Adept at working autonomously as well as collaboratively. Strong ability to multitask under pressure, flexible, and committed to high-quality results.",
+  "skills": [
+    "React","NodeJS","Python","Flutter","Swift","Objective-C",
+    "React Native","Unity","Kotlin","Java","Rails","R",
+    "HTML/CSS/JS/PHP/JSON","SQL & No-SQL","Git","Jira","Agile SDLC"
+  ],
+  "experience": [
+    {
+      "role": "Software Developer",
+      "company": "Urbanoid Inc, Montreal",
+      "dates": "2020 – Present",
+      "bullets": [
+        "Developed Ionic + React app showcasing products from vendors",
+        "Built AR-supported apps with React Native, ViroReact, and JavaScript.",
+        "Developed Flutter + Unity (C#) with Vuforia; native libs for background tasks.",
+        "Version control and releases for App Store / Play Store.",
+        "Researched feasibility and integrations for immersive real-time UX."
+      ]
+    },
+    {
+      "role": "IT Specialist",
+      "company": "Micro Stark Solutions, Montreal",
+      "dates": "2019 – 2020",
+      "bullets": [
+        "Resolved IT issues; supported network operations.",
+        "Integrated and administered VOIP systems."
+      ]
+    },
+    {
+      "role": "Web Consultant",
+      "company": "Textil’Art (Montreal) / Infuse IT (Kelowna)",
+      "dates": "2017 – 2018",
+      "bullets": [
+        "Debugged & optimized sites before updates.",
+        "Maintained & migrated systems with documentation and backups."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "UBC Capstone – Award Nomination Portal",
+      "tech": ["Laravel", "Frontend", "Testing", "Scrum Master"],
+      "desc": "Web app for managing award nominations; modeling, UI, testing, client liaison."
+    },
+    {
+      "name": "Data Projection & Project Management",
+      "tech": ["MS Project", "Visualization Plugins"],
+      "desc": "Business analysis, visualization, and project organization."
+    }
+  ],
+  "education": [
+    {"school": "Communautique (Montréal)", "dates": "2020", "notes": "DS4Y Internship Program"},
+    {"school": "Collège Bois-de-Boulogne (Montréal)", "dates": "2019", "notes": "French Language Courses"},
+    {"school": "University of British Columbia, Okanagan", "dates": "2017", "notes": "BSc. Computer Science"}
+  ]
+}
