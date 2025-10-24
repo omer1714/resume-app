@@ -716,11 +716,39 @@ class ContactTab extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(12),
-              child: QrImageView(
-                data: siteUrl,
-                version: QrVersions.auto,
-                size: 180,
-              ),
+              child: Center(
+                child: Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: QrImageView(
+                      data: siteUrl,                 // must be non-empty
+                      version: QrVersions.auto,
+                      size: 180,
+                      // These two help visibility in dark/light themes:
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      eyeStyle: const QrEyeStyle(eyeShape: QrEyeShape.square),
+                      dataModuleStyle: const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square),
+
+                      // If anything fails, you'll see why instead of an empty box:
+                      errorStateBuilder: (context, err) => SizedBox(
+                        width: 180, height: 180,
+                        child: Center(
+                          child: Text(
+                            'QR error:\n$err',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
             ),
           ),
         ),
