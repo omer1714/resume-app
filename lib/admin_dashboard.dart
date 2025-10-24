@@ -345,6 +345,9 @@ class _ResumeEditorState extends State<_ResumeEditor> {
           .where((e) => e.school.trim().isNotEmpty || e.dates.trim().isNotEmpty || e.notes.trim().isNotEmpty)
           .map((e) => {'school': e.school.trim(), 'dates': e.dates.trim(), 'notes': e.notes.trim()})
           .toList(),
+
+      'experience': _experience,
+      'projects': _projects,
       
       'pdf': {
         'en': _pdfEn.text.trim(),
