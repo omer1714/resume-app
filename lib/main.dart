@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -671,8 +672,12 @@ class ContactTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final email = (data['email'] ?? '').toString();
     final links = List<Map<String, dynamic>>.from(data['links'] ?? const []);
-    final pdf = (data['pdf'] as Map<String, dynamic>?) ?? const {};
+
     final lang = Localizations.localeOf(context).languageCode.toLowerCase(); // 'en' | 'fr'
+    const baseUrl = 'https://resume-app-omer.web.app';
+    final siteUrl = '$baseUrl?lang=$lang';
+
+    final pdf = (data['pdf'] as Map<String, dynamic>?) ?? const {};
     final fallback = lang == 'fr' ? (pdf['fr'] ?? pdf['en']) : (pdf['en'] ?? pdf['fr']);
     final pdfUrl = (fallback ?? '').toString();
 
@@ -691,25 +696,35 @@ class ContactTab extends StatelessWidget {
               subtitle: Text((l['url'] ?? '').toString()),
               onTap: () => launchUrl(Uri.parse((l['url'] ?? '').toString())),
             )),
-        const SizedBox(height: 16),
-        if (pdfUrl.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 24), // spacing above the button
-            child: Align(
-              alignment: Alignment.center, // optional: align left instead of full width
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 240), // smaller button width
-                child: OutlinedButton.icon(
-                  onPressed: () => launchUrl(
-                    Uri.parse(pdfUrl),
-                    webOnlyWindowName: '_blank',
-                  ),
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: Text(lang == 'fr' ? 'Voir le CV' : 'View Resume'),
-                ),
+        const SizedBox(height: 24),
+        Text(
+          lang == 'fr'
+              ? 'Scanner le code QR pour voir mon CV en ligne'
+              : 'Scan the QR Code to view my live Resume',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 12),
+
+        // Dynamic QR (no asset needed)
+        Center(
+          child: Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: QrImageView(
+                data: siteUrl,
+                version: QrVersions.auto,
+                size: 180,
               ),
             ),
           ),
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }

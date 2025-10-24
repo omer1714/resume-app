@@ -8,6 +8,7 @@ import 'package:resume_app/features/shared/editors/projects_editor.dart';
 import 'package:resume_app/features/shared/utils/icon_registry.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 // import 'dart:typed_data';
 // import 'package:file_picker/file_picker.dart';
@@ -105,83 +106,155 @@ class _UsersTab extends StatelessWidget {
 
         final adminCount = docs.where((d) => (d.data()['role'] == 'admin')).length;
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(12),
-          itemCount: docs.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
-          itemBuilder: (context, i) {
-            final d = docs[i];
-            final data = d.data();
-            final email = (data['email'] ?? '') as String;
-            final approved = (data['approved'] ?? false) as bool;
-            final emailVerified = (data['emailVerified'] ?? false) as bool;
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(12),
+                itemCount: docs.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, i) {
+                  final d = docs[i];
+                  final data = d.data();
+                  final email = (data['email'] ?? '') as String;
+                  final approved = (data['approved'] ?? false) as bool;
+                  final emailVerified = (data['emailVerified'] ?? false) as bool;
 
-            final String roleDisplay = switch (data['role']) {
-              'viewer' => 'viewer',
-              'editor' => 'editor',
-              'admin'  => 'admin',
-              _        => 'unknown',
-            };
+                  final String roleDisplay = switch (data['role']) {
+                    'viewer' => 'viewer',
+                    'editor' => 'editor',
+                    'admin'  => 'admin',
+                    _        => 'unknown',
+                  };
 
-            final bool isSelf = d.id == selfUid;
-            final bool isThisAdmin = roleDisplay == 'admin';
-            final bool lockThisRow = (isSelf && isThisAdmin && adminCount <= 1);
+                  final bool isSelf = d.id == selfUid;
+                  final bool isThisAdmin = roleDisplay == 'admin';
+                  final bool lockThisRow = (isSelf && isThisAdmin && adminCount <= 1);
 
-            return Card(
-              child: ListTile(
-                title: Row(
-                  children: [
-                    Expanded(child: Text(email.isEmpty ? d.id : email)),
-                    if (!emailVerified)
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Tooltip(
-                          message: 'Email not verified',
-                          child: Chip(label: Text('Unverified')),
-                        ),
+                  return Card(
+                    child: ListTile(
+                      title: Row(
+                        children: [
+                          Expanded(child: Text(email.isEmpty ? d.id : email)),
+                          if (!emailVerified)
+                            const Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Tooltip(
+                                message: 'Email not verified',
+                                child: Chip(label: Text('Unverified')),
+                              ),
+                            ),
+                        ],
                       ),
-                  ],
-                ),
-                subtitle: Text('uid: ${d.id}  •  role: $roleDisplay'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DropdownButton<String>(
-                      value: roleDisplay,
-                      items: const [
-                        DropdownMenuItem(value: 'unknown', child: Text('unknown')),
-                        DropdownMenuItem(value: 'viewer',  child: Text('viewer')),
-                        DropdownMenuItem(value: 'editor',  child: Text('editor')),
-                        DropdownMenuItem(value: 'admin',   child: Text('admin')),
-                      ],
-                      onChanged: (v) async {
-                        if (v == null) return;
-                        if (lockThisRow) return;
-                        if (isThisAdmin && adminCount <= 1 && v != 'admin') {
-                          // prevent removing the last admin
-                          return;
-                        }
-                        await d.reference.update({'role': v == 'unknown' ? null : v});
-                      },
+                      subtitle: Text('uid: ${d.id}  •  role: $roleDisplay'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          DropdownButton<String>(
+                            value: roleDisplay,
+                            items: const [
+                              DropdownMenuItem(value: 'unknown', child: Text('unknown')),
+                              DropdownMenuItem(value: 'viewer',  child: Text('viewer')),
+                              DropdownMenuItem(value: 'editor',  child: Text('editor')),
+                              DropdownMenuItem(value: 'admin',   child: Text('admin')),
+                            ],
+                            onChanged: (v) async {
+                              if (v == null) return;
+                              if (lockThisRow) return;
+                              if (isThisAdmin && adminCount <= 1 && v != 'admin') {
+                                return;
+                              }
+                              await d.reference.update({'role': v == 'unknown' ? null : v});
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          FilterChip(
+                            label: const Text('Approved'),
+                            selected: approved,
+                            onSelected: (!emailVerified || lockThisRow)
+                                ? null
+                                : (sel) => d.reference.update({'approved': sel}),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 12),
-                    FilterChip(
-                      label: const Text('Approved'),
-                      selected: approved,
-                      onSelected: (!emailVerified || lockThisRow)
-                          ? null
-                          : (sel) => d.reference.update({'approved': sel}),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+
+            // Footer QR to share the live site
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: Builder(
+                builder: (context) {
+                  const baseUrl = 'https://resume-app-omer.web.app';
+                  final siteUrl = baseUrl; // could also include ?lang=...
+
+                  return Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          QrImageView(
+                            data: siteUrl,
+                            version: QrVersions.auto,
+                            size: 110,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Share the live site', style: Theme.of(context).textTheme.titleSmall),
+                                const SizedBox(height: 6),
+                                Text(
+                                  siteUrl,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  children: [
+                                    OutlinedButton.icon(
+                                      onPressed: () => launchUrl(Uri.parse(siteUrl), webOnlyWindowName: '_blank'),
+                                      icon: const Icon(Icons.open_in_new),
+                                      label: const Text('Open'),
+                                    ),
+                                    OutlinedButton.icon(
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Link copied (press ⌘+C / Ctrl+C)')),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.content_copy),
+                                      label: const Text('Copy'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         );
-      },
+      }
     );
   }
 }
+
 
 /// ---------------- RESUME EDITOR (per language) ----------------
 class _ResumeEditor extends StatefulWidget {
