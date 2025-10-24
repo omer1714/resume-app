@@ -691,12 +691,24 @@ class ContactTab extends StatelessWidget {
               subtitle: Text((l['url'] ?? '').toString()),
               onTap: () => launchUrl(Uri.parse((l['url'] ?? '').toString())),
             )),
-        if (pdfUrl.isNotEmpty)
         const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: () => launchUrl(Uri.parse(pdfUrl), webOnlyWindowName: '_blank'),
-            icon: const Icon(Icons.picture_as_pdf),
-            label: Text(lang == 'fr' ? 'Voir le CV' : 'View Resume'),
+        if (pdfUrl.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 24), // spacing above the button
+            child: Align(
+              alignment: Alignment.center, // optional: align left instead of full width
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 240), // smaller button width
+                child: OutlinedButton.icon(
+                  onPressed: () => launchUrl(
+                    Uri.parse(pdfUrl),
+                    webOnlyWindowName: '_blank',
+                  ),
+                  icon: const Icon(Icons.picture_as_pdf),
+                  label: Text(lang == 'fr' ? 'Voir le CV' : 'View Resume'),
+                ),
+              ),
+            ),
           ),
       ],
     );
